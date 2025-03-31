@@ -10,15 +10,15 @@ defmodule PentominoTest do
   end
 
   describe "piece/1" do
-    test "returns the list of cells for the piece" do
-      assert Pentomino.piece(0) == {:ok, [0]}
-      assert Pentomino.piece(1) == {:ok, [0, 1]}
-      assert Pentomino.piece(9) == {:ok, [1, 2, 5, 6, 11]}
+    test "returns the expected structure" do
+      assert Pentomino.piece(0) == %Pentomino{cells: [0]}
+      assert Pentomino.piece(1) == %Pentomino{cells: [0, 1]}
+      assert Pentomino.piece(9) == %Pentomino{cells: [1, 2, 5, 6, 11]}
     end
 
-    test "returns end-of-list values for negative piece number" do
-      assert Pentomino.piece(-1) == {:ok, [1, 2, 6, 10, 11]}
-      assert Pentomino.piece(-2) == {:ok, [0, 1, 2, 3, 6]}
+    test "returns end-of-list structures for negative piece number" do
+      assert Pentomino.piece(-1) == %Pentomino{cells: [1, 2, 6, 10, 11]}
+      assert Pentomino.piece(-2) == %Pentomino{cells: [0, 1, 2, 3, 6]}
     end
 
     test "returns :error for too-large piece number" do
@@ -73,38 +73,54 @@ defmodule PentominoTest do
   end
 
   describe "flip_top_to_bottom/1" do
-    test "returns the indexes of the top-to-bottom flip (and 'snug') of the given set of cells" do
-      assert Pentomino.flip_top_to_bottom([0]) == [0]
-      assert Pentomino.flip_top_to_bottom([1]) == [0]
-      assert Pentomino.flip_top_to_bottom([2]) == [0]
-      assert Pentomino.flip_top_to_bottom([9, 10]) == [9, 0]
+    test "returns a new pentomino that has been flipped top-to-bottom and 'snugged'" do
+      assert Pentomino.flip_top_to_bottom(%Pentomino{cells: [0]}) == %Pentomino{cells: [0]}
+      assert Pentomino.flip_top_to_bottom(%Pentomino{cells: [1]}) == %Pentomino{cells: [0]}
+      assert Pentomino.flip_top_to_bottom(%Pentomino{cells: [2]}) == %Pentomino{cells: [0]}
+      assert Pentomino.flip_top_to_bottom(%Pentomino{cells: [9, 10]}) == %Pentomino{cells: [0, 9]}
+
+      assert Pentomino.flip_top_to_bottom(%Pentomino{cells: [1, 2, 5, 6, 11]}) == %Pentomino{
+               cells: [1, 5, 6, 11, 12]
+             }
     end
   end
 
   describe "flip_side_to_side/1" do
-    test "returns the indexes of the top-to-bottom flip (and 'snug') of the given set of cells" do
-      assert Pentomino.flip_side_to_side([0]) == [0]
-      assert Pentomino.flip_side_to_side([1]) == [0]
-      assert Pentomino.flip_side_to_side([2]) == [0]
-      assert Pentomino.flip_side_to_side([9, 10]) == [0, 9]
+    test "returns a new pentomino that has been flipped side-to-side and 'snugged'" do
+      assert Pentomino.flip_side_to_side(%Pentomino{cells: [0]}) == %Pentomino{cells: [0]}
+      assert Pentomino.flip_side_to_side(%Pentomino{cells: [1]}) == %Pentomino{cells: [0]}
+      assert Pentomino.flip_side_to_side(%Pentomino{cells: [2]}) == %Pentomino{cells: [0]}
+      assert Pentomino.flip_side_to_side(%Pentomino{cells: [9, 10]}) == %Pentomino{cells: [0, 9]}
+
+      assert Pentomino.flip_side_to_side(%Pentomino{cells: [1, 2, 5, 6, 11]}) == %Pentomino{
+               cells: [0, 1, 6, 7, 11]
+             }
     end
   end
 
   describe "rotate_left/1" do
-    test "returns the indexes of the leftward-rotation (and 'snug') of the given set of cells" do
-      assert Pentomino.rotate_left([0]) == [0]
-      assert Pentomino.rotate_left([1]) == [0]
-      assert Pentomino.rotate_left([2]) == [0]
-      assert Pentomino.rotate_left([9, 10]) == [0, 21]
+    test "returns a new pentomino that has been rotated leftward and 'snugged'" do
+      assert Pentomino.rotate_left(%Pentomino{cells: [0]}) == %Pentomino{cells: [0]}
+      assert Pentomino.rotate_left(%Pentomino{cells: [1]}) == %Pentomino{cells: [0]}
+      assert Pentomino.rotate_left(%Pentomino{cells: [2]}) == %Pentomino{cells: [0]}
+      assert Pentomino.rotate_left(%Pentomino{cells: [9, 10]}) == %Pentomino{cells: [0, 21]}
+
+      assert Pentomino.rotate_left(%Pentomino{cells: [1, 2, 5, 6, 11]}) == %Pentomino{
+               cells: [0, 5, 6, 7, 11]
+             }
     end
   end
 
   describe "rotate_right/1" do
-    test "returns the indexes of the rightward-rotation (and 'snug') of the given set of cells" do
-      assert Pentomino.rotate_right([0]) == [0]
-      assert Pentomino.rotate_right([1]) == [0]
-      assert Pentomino.rotate_right([2]) == [0]
-      assert Pentomino.rotate_right([9, 10]) == [21, 0]
+    test "returns a new pentomino that has been rotated rightward and 'snugged'" do
+      assert Pentomino.rotate_right(%Pentomino{cells: [0]}) == %Pentomino{cells: [0]}
+      assert Pentomino.rotate_right(%Pentomino{cells: [1]}) == %Pentomino{cells: [0]}
+      assert Pentomino.rotate_right(%Pentomino{cells: [2]}) == %Pentomino{cells: [0]}
+      assert Pentomino.rotate_right(%Pentomino{cells: [9, 10]}) == %Pentomino{cells: [0, 21]}
+
+      assert Pentomino.rotate_right(%Pentomino{cells: [1, 2, 5, 6, 11]}) == %Pentomino{
+               cells: [1, 5, 6, 7, 12]
+             }
     end
   end
 end

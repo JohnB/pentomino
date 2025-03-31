@@ -5,15 +5,16 @@ defmodule Pentomino do
     and the domino and monomino - but we'll call it by its biggest shapes - the Pentomino.
     Wikipedia lumps them under ["Polyomino"](https://en.wikipedia.org/wiki/Polyomino)
     
-    Each pentomino square is represented as a set of cell positions in a 5x5 grid.
+    Each pentomino shape is represented as a set of cell positions in a 5x5 grid.
     However, the 5x5 grid has been flattened to an array, with positions
     represented by a single integer in the range 0 to 24
     
   """
+  defstruct [:cells]
 
   @max_dimension 5
   @max_grid @max_dimension * @max_dimension
-  @pentominos [
+  @shapes [
     # monomio or dot
     [0],
     # domino or n-dash
@@ -63,7 +64,8 @@ defmodule Pentomino do
   List all the pentominos, with no rotations or flips.
   """
   def all do
-    @pentominos
+    @shapes
+    |> Enum.map(fn cells -> %Pentomino{cells: cells} end)
   end
 
   @doc """
@@ -72,7 +74,10 @@ defmodule Pentomino do
   select from the end of the list.
   """
   def piece(index) do
-    all() |> Enum.fetch(index)
+    case Enum.fetch(all(), index) do
+      {:ok, pentomino} -> pentomino
+      anything_else -> anything_else
+    end
   end
 
   @doc """
@@ -103,48 +108,56 @@ defmodule Pentomino do
   # so this should snug it up and to the left.
   @doc false
   def snug(pentomino) do
-    min_x = pentomino |> Enum.map(fn idx -> x_offset(idx) end) |> Enum.min()
-    min_y = pentomino |> Enum.map(fn idx -> y_offset(idx) end) |> Enum.min()
+    min_x = pentomino.cells |> Enum.map(fn idx -> x_offset(idx) end) |> Enum.min()
+    min_y = pentomino.cells |> Enum.map(fn idx -> y_offset(idx) end) |> Enum.min()
     offset = min_x + min_y * @max_dimension
 
-    pentomino |> Enum.map(fn idx -> idx - offset end)
+    %Pentomino{
+      cells: Enum.map(pentomino.cells, fn idx -> idx - offset end) |> Enum.sort()
+    }
   end
 
   @doc """
-  Flip a piece (list of indexes) to a new set of indexes that
+  Flip a pentomino's cells to a new set of cells that
   has been "snugged up" to the top-left corner.
   """
   def flip_top_to_bottom(pentomino) do
-    Enum.map(pentomino, fn index ->
-      [x, y] = index_to_xy(index)
-      xy_to_index([x, @max_dimension - 1 - y])
-    end)
+    %Pentomino{
+      cells:
+        pentomino.cells
+        |> Enum.map(fn index ->
+          [x, y] = index_to_xy(index)
+          xy_to_index([x, @max_dimension - 1 - y])
+        end)
+    }
     |> snug()
   end
 
   @doc """
-  Flip a piece (list of indexes) to a new set of indexes that
+  Flip a pentomino's cells to a new set of cells that
   has been "snugged up" to the top-left corner.
   """
   def flip_side_to_side(pentomino) do
-    Enum.map(pentomino, fn index ->
-      [x, y] = index_to_xy(index)
-      xy_to_index([@max_dimension - 1 - x, y])
-    end)
+    %Pentomino{
+      cells:
+        pentomino.cells
+        |> Enum.map(fn index ->
+          [x, y] = index_to_xy(index)
+          xy_to_index([@max_dimension - 1 - x, y])
+        end)
+    }
     |> snug()
   end
 
   @doc """
-  Rotate a piece (list of indexes) to a new set of indexes that
-  has been "snugged up" to the top-left corner.
+  Rotate a piece and snug it to the top-left corner.
   """
   def rotate_left(pentomino) do
     core_rotate_left(pentomino) |> snug()
   end
 
   @doc """
-  Rotate a piece (list of indexes) to a new set of indexes that
-  has been "snugged up" to the top-left corner.
+  Rotate a piece and snug it to the top-left corner.
   """
   def rotate_right(pentomino) do
     pentomino
@@ -156,9 +169,13 @@ defmodule Pentomino do
 
   @doc false
   defp core_rotate_left(pentomino) do
-    Enum.map(pentomino, fn index ->
-      [x, y] = index_to_xy(index)
-      xy_to_index([y, @max_dimension - 1 - x])
-    end)
+    %Pentomino{
+      cells:
+        pentomino.cells
+        |> Enum.map(fn index ->
+          [x, y] = index_to_xy(index)
+          xy_to_index([y, @max_dimension - 1 - x])
+        end)
+    }
   end
 end
