@@ -3,7 +3,7 @@ defmodule Pentomino do
     Pentomino is what we call the shape of a piece in Blokus, and similar games.
     These pieces are the sum of the set of pentominos, tetrominos, trominos,
     and the domino and monomino - but we'll call it by its biggest shapes.
-    `https://en.wikipedia.org/wiki/Polyomino`
+    Wikipedia lumps them under ["Polyomino"](https://en.wikipedia.org/wiki/Polyomino)
     
     Each pentomino square is represented as a grid position in a 5x5 grid.
     However, the 5x5 grid has been flattened to an array, with positions
@@ -12,6 +12,7 @@ defmodule Pentomino do
   """
 
   @max_dimension 5
+  @max_grid @max_dimension * @max_dimension
   @pentominos [
     # monomio or dot
     [0],
@@ -66,7 +67,7 @@ defmodule Pentomino do
   end
 
   @doc """
-  One particular piece, indexed from 0 to 20.
+  One particular piece, indexed from 0 to 24.
   Returns nil for out-of-bounds index.
   """
   def piece(index) do
@@ -81,7 +82,7 @@ defmodule Pentomino do
   @doc """
   Convert from an index to the Y offset.
   """
-  def y_offset(index), do: Integer.floor_div(index, @max_dimension)
+  def y_offset(index), do: Integer.floor_div(Integer.mod(index, @max_grid), @max_dimension)
 
   @doc """
   Convert from an index to an `[X,Y]` list.
@@ -104,7 +105,6 @@ defmodule Pentomino do
     min_x = pentomino |> Enum.map(fn idx -> x_offset(idx) end) |> Enum.min()
     min_y = pentomino |> Enum.map(fn idx -> y_offset(idx) end) |> Enum.min()
     offset = min_x + min_y * @max_dimension
-    IO.inspect([min_x, min_y, offset])
 
     pentomino |> Enum.map(fn idx -> idx - offset end)
   end
@@ -141,14 +141,6 @@ defmodule Pentomino do
     core_rotate_left(pentomino) |> snug()
   end
 
-  @doc false
-  defp core_rotate_left(pentomino) do
-    Enum.map(pentomino, fn index ->
-      [x, y] = index_to_xy(index)
-      xy_to_index([y, @max_dimension - 1 - x])
-    end)
-  end
-
   @doc """
   Rotate a piece (list of indexes) to a new set of indexes that
   has been "snugged up" to the top-left corner.
@@ -159,5 +151,13 @@ defmodule Pentomino do
     |> core_rotate_left
     |> core_rotate_left
     |> snug()
+  end
+
+  @doc false
+  defp core_rotate_left(pentomino) do
+    Enum.map(pentomino, fn index ->
+      [x, y] = index_to_xy(index)
+      xy_to_index([y, @max_dimension - 1 - x])
+    end)
   end
 end
