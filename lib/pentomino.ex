@@ -1,13 +1,13 @@
 defmodule Pentomino do
   @moduledoc """
-    Pentomino is what we call the shape of a piece in Blokus, and similar games.
-    These pieces are the sum of the set of pentominos, tetrominos, trominos,
-    and the domino and monomino - but we'll call it by its biggest shapes.
+    Pentomino is what this project calls the shape made from five (or fewer) adjoining squares.
+    These shapes are the sum of the set of pentominos, tetrominos, trominos,
+    and the domino and monomino - but we'll call it by its biggest shapes - the Pentomino.
     Wikipedia lumps them under ["Polyomino"](https://en.wikipedia.org/wiki/Polyomino)
     
-    Each pentomino square is represented as a grid position in a 5x5 grid.
+    Each pentomino square is represented as a set of cell positions in a 5x5 grid.
     However, the 5x5 grid has been flattened to an array, with positions
-    represented by a single integer in the range 0..24
+    represented by a single integer in the range 0 to 24
     
   """
 
@@ -68,7 +68,8 @@ defmodule Pentomino do
 
   @doc """
   One particular piece, indexed from 0 to 24.
-  Returns nil for out-of-bounds index.
+  Returns :error for a too-large index, but negative indexes
+  select from the end of the list.
   """
   def piece(index) do
     all() |> Enum.fetch(index)
