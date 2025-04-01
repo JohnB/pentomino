@@ -69,11 +69,11 @@ defmodule Pentomino do
   end
 
   @doc """
-  One particular piece, indexed from 0 to 24.
+  Return one particular shape, indexed from 0 to 20.
   Returns :error for a too-large index, but negative indexes
   select from the end of the list.
   """
-  def piece(index) do
+  def shape(index) do
     case Enum.fetch(all(), index) do
       {:ok, pentomino} -> pentomino
       anything_else -> anything_else
@@ -104,7 +104,7 @@ defmodule Pentomino do
     x + width * y
   end
 
-  # flipping and rotating may move the piece away from the (1,1) origin
+  # flipping and rotating may move the shape away from the (0,0) origin
   # so this should snug it up and to the left.
   @doc false
   def snug(pentomino) do
@@ -150,14 +150,14 @@ defmodule Pentomino do
   end
 
   @doc """
-  Rotate a piece and snug it to the top-left corner.
+  Rotate a shape and snug it to the top-left corner.
   """
   def rotate_left(pentomino) do
     core_rotate_left(pentomino) |> snug()
   end
 
   @doc """
-  Rotate a piece and snug it to the top-left corner.
+  Rotate a shape and snug it to the top-left corner.
   """
   def rotate_right(pentomino) do
     pentomino

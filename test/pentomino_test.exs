@@ -9,20 +9,20 @@ defmodule PentominoTest do
     end
   end
 
-  describe "piece/1" do
+  describe "shape/1" do
     test "returns the expected structure" do
-      assert Pentomino.piece(0) == %Pentomino{cells: [0]}
-      assert Pentomino.piece(1) == %Pentomino{cells: [0, 1]}
-      assert Pentomino.piece(9) == %Pentomino{cells: [1, 2, 5, 6, 11]}
+      assert Pentomino.shape(0) == %Pentomino{cells: [0]}
+      assert Pentomino.shape(1) == %Pentomino{cells: [0, 1]}
+      assert Pentomino.shape(9) == %Pentomino{cells: [1, 2, 5, 6, 11]}
     end
 
-    test "returns end-of-list structures for negative piece number" do
-      assert Pentomino.piece(-1) == %Pentomino{cells: [1, 2, 6, 10, 11]}
-      assert Pentomino.piece(-2) == %Pentomino{cells: [0, 1, 2, 3, 6]}
+    test "returns end-of-list structures for negative shape number" do
+      assert Pentomino.shape(-1) == %Pentomino{cells: [1, 2, 6, 10, 11]}
+      assert Pentomino.shape(-2) == %Pentomino{cells: [0, 1, 2, 3, 6]}
     end
 
-    test "returns :error for too-large piece number" do
-      assert Pentomino.piece(321) == :error
+    test "returns :error for too-large shape number" do
+      assert Pentomino.shape(321) == :error
     end
   end
 
